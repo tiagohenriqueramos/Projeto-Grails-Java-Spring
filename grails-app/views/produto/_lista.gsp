@@ -1,24 +1,19 @@
 <g:if test="${produtos?.size() > 0}">
-
     <table>
         <tr>
             <th>Nome</th>
             <th>Preço</th>
-            <th>Qtde. Atual</th>
-            <th>Qtede. Minima</th>
             <th>Ações</th>
         </tr>
-
         <g:each var="produto" in="${produtos}">
             <tr>
-                <td>${produto.nome}</td>
-                <td>${produto.preco}</td>
-                <td>${produto.estoque?.quantidade}</td>
-                <td>${produto.estoque?.quantidadeMinima}</td>
+                <td>${produto?.nome ?: 'Nome não disponível'}</td>
+                <td>${produto?.preco ?: 'Preço não disponível'}</td>
                 <td>
-                    <a href="#" onclick="carregarFormularioAlterar('${produto.id}')">Alterar</a>
-                    &nbsp;
-                    <a href="#" onclick="excluir('${produto.id}')">Excluir</a>
+                    <a href="#" onclick="carregarFormularioAlterar('${produto?.id}')">Alterar</a>
+
+                    <a href="#" onclick="excluir('${produto?.id}')">Excluir</a>
+
                 </td>
             </tr>
         </g:each>

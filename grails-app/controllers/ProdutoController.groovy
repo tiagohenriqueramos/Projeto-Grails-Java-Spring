@@ -6,19 +6,13 @@ class ProdutoController {
     }
 
     def adicionar() {
-
-        Produto novoProduto = new Produto()
-        novoProduto.preco = 0
-        novoProduto.estoque = new Estoque()
-        novoProduto.estoque.quantidade = 0
-        novoProduto.estoque.quantidadeMinima = 0
-        render(template: "/produto/form", model: [produtos: novoProduto])
-
+        Produto novoProduto = new Produto(nome: "", preco: 0)
+        render(template: "/produto/form", model: [produto: new Produto()])
     }
 
     def alterar() {
         Produto produto = Produto.get(params.id)
-        render(template: "/produto/form", model: [produtos: produto])
+        render(template: "/produto/form", model: [produto: produto])
     }
 
     def lista() {
@@ -27,27 +21,39 @@ class ProdutoController {
     }
 
     def salvar() {
-        Produto produto = params.id ? Produto.get(params.id) : new Produto(estoque: new Estoque())
-        produto.nome = params.nome
-        produto.preco = params.preco.toDouble()
-        if (!produto.estoque) {
-            produto.estoque = new Estoque()
-        }
-        produto.estoque.quantidade = params.quantidade.toInteger()
-        produto.estoque.quantidadeMinima = params.quantidadeMinima.toInteger()
+        Produto produto = params.id ? Produto.get(params.id) : new Produto()
 
-        produto.validate()
-        if (produto.hasErrors()) {
-            render("Deu ruim")
+        produto.nome = params.nome
+
+        if (params.preco) {
+            try {
+                produto.preco = params.preco.toDouble()
+            } catch (NumberFormatException e) {
+                render "O preço deve ser um número válido."
+                return
+            }
         } else {
-            produto.save(flash: true)
-            render("Salvou com sucesso")
+            render "O campo 'preco' é obrigatório."
+            return
+        }
+
+        if (produto.validate() && !produto.hasErrors()) {
+            produto.save(flush: true)
+            render "Salvou com sucesso"
+        } else {
+            render "Deu ruim: ${produto.errors.allErrors}"
         }
     }
 
     def excluir() {
         Produto produto = Produto.get(params.id)
-        produto.delete(flash: true)
+        if (produto) {
+            produto.delete(flush: true)
+            render "Produto excluído com sucesso"
+        } else {
+            render "Produto não encontrado"
+        }
+
         def lista = Produto.list()
         render(template: "/produto/lista", model: [produtos: lista])
     }

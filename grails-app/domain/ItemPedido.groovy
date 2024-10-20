@@ -14,10 +14,6 @@ class ItemPedido {
         observacao nullable: true, blank: true
     }
 
-    static mapping = {
-        produto column: "id_produto"
-        pedido column:  "id_pedido"
-    }
 
     static mapWith = "mongo"
 

@@ -3,6 +3,9 @@ class Cliente {
     String nome;
     String email;
     String senha;
+    String cpf;
+
+    List<Pedido> pedidos
 
     static hasMany = [pedidos: Pedido]
 
